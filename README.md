@@ -68,7 +68,7 @@ cd CodeOven
 ### 3️⃣ Configure Database
 
 * Create a new database (e.g., `codeoven_db`)
-* Import `codeoven_db.sql` from the `database` folder
+* Import `editor_db.sql` from the `database` folder
 
 ### 4️⃣ Run the Application
 
