@@ -124,6 +124,8 @@ docker run -p 8080:80 codeoven
 📍 Jamnagar, Gujarat, India
 > kashak modi is a main person that think about this project and she provide me chance for working on this project as backend developer.
 > special thanks to **kashak Modi**
+
+📧 Email: **[kashakmodi15@gmail.com](mailto:kashakmodi15@gmail.com)**
 📧 Email: **[sahilrathod222@gmail.com](mailto:sahilrathod222@gmail.com)**
 🔗 GitHub: **[https://github.com/developershahil](https://github.com/developershahil)**
 🔗 LinkedIn: **[https://linkedin.com/in/rathod-sahil](https://linkedin.com/in/rathod-sahil)**
