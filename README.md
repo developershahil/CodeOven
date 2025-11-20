@@ -118,10 +118,12 @@ docker run -p 8080:80 codeoven
 
 ---
 
-## 👨‍💻 About Me
+## 👨‍💻 about us
 
-**Rathod Sahil**
+**Kashak Modi** , **Shahil Rathod**
 📍 Jamnagar, Gujarat, India
+> kashak modi is a main person that think about this project and she provide me chance for working on this project as backend developer.
+> special thanks to **kashak Modi**
 📧 Email: **[sahilrathod222@gmail.com](mailto:sahilrathod222@gmail.com)**
 🔗 GitHub: **[https://github.com/developershahil](https://github.com/developershahil)**
 🔗 LinkedIn: **[https://linkedin.com/in/rathod-sahil](https://linkedin.com/in/rathod-sahil)**
@@ -138,15 +140,4 @@ If you like this project, please ⭐ *star the repository* on GitHub.
 
 *“The best way to learn technology is by building and improving real-world projects.”* 🔥
 
-```
-
----
-
-Let me know if you'd like:
-🔹 `.gitignore` file  
-🔹 `Dockerfile`  
-🔹 GitHub Actions workflow  
-🔹 README for `.NET Library Management System`
-
-I'm ready to help you improve the repo more! 🚀
 ```
