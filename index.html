@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeOven - Bake Your Own Code</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+    <!-- Header & Navigation -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">
+                    <i class="fas fa-code"></i>
+                    CodeOven - Bake Your Own Code
+                </a>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#about">About</a>
+                </div>
+                <div class="auth-buttons">
+                    <a href="php/signup.php" class="btn btn-outline">Sign Up</a>
+                    <a href="php/login.php" class="btn btn-outline">Login</a>
+                </div>
+    
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container1">
+            <h1>Code. Create. Preview.</h1>
+            <p>A powerful offline code editor for HTML, CSS, and JavaScript with live preview capabilities. Build stunning web projects without internet dependency.</p>
+            <div class="hero-buttons">
+                <a href="php/dashboard.php" class="btn btn-primary">Try Without Login</a>
+                <a href="php/login.php" class="btn btn-outline">Login to Save Work</a>
+            </div>
+          <div class="preview-3d-container">
+  <div class="holo-grid"></div> <!-- holographic grid background -->
+  <div class="preview-3d-hologram">
+    <div class="preview-glow"></div>
+    <div class="preview-glass">
+      <h3>Live Preview</h3>
+      <div class="code-box">
+        &lt;html&gt;<br>
+        &lt;body&gt;<br>
+        &lt;h1&gt;Hello World!&lt;/h1&gt;<br>
+        &lt;p&gt;This is a live preview of your code.&lt;/p&gt;<br>
+        &lt;/body&gt;<br>
+        &lt;/html&gt;
+      </div>
+      <button class="preview-btn">Click Me</button>
+    </div>
+  </div>
+</div>
+
+        </div>
+    </section>
+
+  <section class="features" id="features">
+  <div class="container">
+    <h2 class="section-title">Powerful Features</h2>
+    <div class="features-grid animated-features">
+      
+      <div class="feature-card floating-card">
+        <div class="icon-wrap">
+          <i class="fas fa-download floating-icon"></i>
+        </div>
+        <h3>Export Projects</h3>
+        <p>Download your projects as organized files with all assets included for easy deployment.</p>
+      </div>
+
+      <div class="feature-card floating-card">
+        <div class="icon-wrap">
+          <i class="fas fa-eye floating-icon"></i>
+        </div>
+        <h3>Live Preview</h3>
+        <p>See your changes instantly with our live preview panel. Auto-run or manual execution options available.</p>
+      </div>
+
+      <div class="feature-card floating-card">
+        <div class="icon-wrap">
+          <i class="fas fa-folder floating-icon"></i>
+        </div>
+        <h3>File Management</h3>
+        <p>Save, organize, and manage your projects. Create folders, rename files, and access your work anytime.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container">
+            <div class="about-content">
+                <h2 class="section-title">Built for Developers, By Developers</h2>
+                <p>CodeCraft is designed to provide a seamless coding experience without the dependency on internet connectivity. Whether you're a student learning web development or a professional prototyping ideas, our editor has everything you need.</p>
+                
+               
+                <div class="divider"></div>
+                
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Start Coding?</h2>
+                <p>Join thousands of developers who trust CodeCraft for their offline development needs.</p>
+            </div>   
+             
+            <div class="btn-container">
+                <div class="auth-buttons">
+                    <a href="php/dashboard.php" class="btn btn-outline">Start Coding</a>
+                    <a href="php/signup.php" class="btn btn-outline">Create Account</a>
+                    
+                </div>
+            </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">CodeCraft</div>
+                <p>© 2024 CodeCraft. Built with passion for developers.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/index.jss"></script>
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const codeBox = document.querySelector(".code-box");
+  if (!codeBox) return;
+
+  // Code content (HTML example)
+  const codeLines = [
+    '&lt;html&gt;',
+    '&lt;body&gt;',
+    '&lt;h1&gt;<span class="text">Hello World!</span>&lt;/h1&gt;',
+    '&lt;p&gt;<span class="text">This is a live preview of your code.</span>&lt;/p&gt;',
+    '&lt;/body&gt;',
+    '&lt;/html&gt;'
+  ];
+
+  let lineIndex = 0;
+  let charIndex = 0;
+  let currentLine = "";
+  codeBox.innerHTML = "";
+
+  function typeCode() {
+    if (lineIndex < codeLines.length) {
+      const fullLine = codeLines[lineIndex];
+      if (charIndex < fullLine.length) {
+        currentLine += fullLine.charAt(charIndex);
+        codeBox.innerHTML =
+          codeLines.slice(0, lineIndex).join("<br>") + "<br>" + currentLine;
+        charIndex++;
+        setTimeout(typeCode, 35); // typing speed
+      } else {
+        lineIndex++;
+        charIndex = 0;
+        currentLine = "";
+        setTimeout(typeCode, 300);
+      }
+    } else {
+      // restart animation
+      setTimeout(() => {
+        codeBox.innerHTML = "";
+        lineIndex = 0;
+        charIndex = 0;
+        currentLine = "";
+        typeCode();
+      }, 2000);
+    }
+  }
+
+  typeCode();
+});
+</script>
+
+
+</body>
+</html>
