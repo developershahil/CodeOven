@@ -35,6 +35,20 @@ CodeOven/
 
 For conventions and future refactoring guidelines, see `docs/PROJECT_STRUCTURE.md`.
 
+
+## Repository Governance
+
+- Structure conventions: `docs/PROJECT_STRUCTURE.md`
+- Commit message conventions: `docs/COMMIT_GUIDELINES.md`
+- Optional local git commit template: `.gitmessage`
+
+To use the commit template locally:
+
+```bash
+git config commit.template .gitmessage
+```
+
+
 ## Quick Start
 
 1. Place this repository under your local PHP server root (e.g. `htdocs/CodeOven`).
@@ -57,55 +71,68 @@ This repository now includes:
 Run before opening a PR:
 
 ```bash
-# Coming Soon
-docker build -t codeoven .
-docker run -p 8080:80 codeoven
+find php api includes -type f -name '*.php' -print0 | while IFS= read -r -d '' file; do php -l "$file"; done
 ```
 
-> Docker integration is in progress as part of ongoing DevOps learning.
+Then verify manually:
 
----
+- Landing page interactions render correctly.
+- Dashboard scripts load without console errors.
+- Save/load operations work from the dashboard.
 
-## 🔄 CI/CD Pipeline *(Upcoming)*
+## Secure Code Execution Sandbox
 
-* Basic GitHub Actions workflow will be added
-* Build automation and backend validation planned
+CodeOven exposes `POST /api/execute` to run user-submitted code safely in Docker sandboxes for:
+- Python
+- PHP
+- C++
 
----
+### Endpoint request
+- `language`: `python | php | cpp` (also accepts `c++`)
+- `code`: source code string
+- `stdin`: optional standard input string
 
-## 📚 Future Enhancements
+### Endpoint response
+- `stdout`
+- `stderr`
+- `exit_code`
+- `timed_out`
 
-* [ ] Add Docker support
-* [ ] Configure GitHub Actions CI/CD
-* [ ] Support more programming languages
-* [ ] User authentication & workspace management
-* [ ] Deploy on AWS (EC2 / Elastic Beanstalk)
-* [ ] Performance logs & monitoring system
+### Production setup
+Prebuild runner images before serving traffic: `bash sandbox/scripts/prebuild_images.sh`
 
----
 
-## 👨‍💻 about us
+## Authentication & Workspaces
 
-**Kashak Modi** , **Shahil Rathod**
-📍 Jamnagar, Gujarat, India
-> kashak modi is a main person that think about this project and she provide me chance for working on this project as backend developer.
-> special thanks to **kashak Modi**
+- Registration/Login/Logout are enabled with secure sessions.
+- Password hashing uses bcrypt (`password_hash(..., PASSWORD_BCRYPT)`).
+- CSRF protection is enforced on auth forms and write APIs.
+- Per-user workspace directories are stored at:
+  - `storage/workspaces/{user_id}`
 
-📧 Email: **[kashakmodi15@gmail.com](mailto:kashakmodi15@gmail.com)**
-📧 Email: **[sahilrathod222@gmail.com](mailto:sahilrathod222@gmail.com)**
-🔗 GitHub: **[https://github.com/developershahil](https://github.com/developershahil)**
-🔗 LinkedIn: **[https://linkedin.com/in/rathod-sahil](https://linkedin.com/in/rathod-sahil)**
+### API Auth
 
-> 💡 Currently learning Docker, CI/CD pipelines, Linux & AWS to transition towards DevOps & Cloud Engineering roles.
+All `/api/*` routes require an authenticated session.
+Write routes additionally require CSRF token:
+- header: `X-CSRF-Token`
+- or form field: `_csrf_token`
 
----
+### File CRUD APIs
 
-## ⭐ Support
+- `GET /api/get_files.php`
+- `GET /api/load_file.php?file_name={name}`
+- `POST /api/save_file.php`
+- `POST /api/rename_file.php`
+- `POST /api/delete_file.php`
 
-If you like this project, please ⭐ *star the repository* on GitHub.
+### DB Migration
 
----
+Run: `migrations/2026_02_auth_workspace.sql`
 
-*“The best way to learn technology is by building and improving real-world projects.”* 🔥
+### Quick verification script
 
+Run a simple end-to-end auth + file CRUD check:
+
+```bash
+php tests/auth_file_crud_test.php http://localhost/CodeOven
 ```

@@ -1,0 +1,9 @@
+RewriteEngine On
+
+RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK) [NC]
+RewriteRule .* - [F,L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^execute/?$ execute.php [L,QSA]
+RewriteRule ^execute/index\.php$ execute.php [L,QSA]
