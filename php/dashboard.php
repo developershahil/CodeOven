@@ -50,6 +50,7 @@ $username = $_SESSION['username'] ?? 'Guest';
     <script src="../codemirror/addon/search/searchcursor.js"></script>
     <script src="../codemirror/addon/dialog/dialog.js"></script>
 
-    <script src="../js/dashboard.js"></script>\n    <script src="../js/api_integration.js"></script>
+    <script src="../js/dashboard.js"></script>
+    <script src="../js/api_integration.js"></script>
 </body>
 </html>
