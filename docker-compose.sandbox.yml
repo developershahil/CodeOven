@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  sandbox-python:
+    image: codeoven-sandbox-python:latest
+    build:
+      context: ./sandbox/docker/python
+      dockerfile: Dockerfile
+    profiles: ["sandbox-build"]
+    command: ["sh", "-lc", "echo python image ready"]
+
+  sandbox-php:
+    image: codeoven-sandbox-php:latest
+    build:
+      context: ./sandbox/docker/php
+      dockerfile: Dockerfile
+    profiles: ["sandbox-build"]
+    command: ["sh", "-lc", "echo php image ready"]
+
+  sandbox-cpp:
+    image: codeoven-sandbox-cpp:latest
+    build:
+      context: ./sandbox/docker/cpp
+      dockerfile: Dockerfile
+    profiles: ["sandbox-build"]
+    command: ["sh", "-lc", "echo cpp image ready"]
