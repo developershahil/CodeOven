@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS `tbl_users` (
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `failed_login_attempts` int NOT NULL DEFAULT '0',
   `last_login_at` datetime DEFAULT NULL,
+  `locked_until` datetime DEFAULT NULL,
   `password_updated_at` datetime DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`),

@@ -114,3 +114,11 @@ Write routes additionally require CSRF token:
 ### DB Migration
 
 Run: `migrations/2026_02_auth_workspace.sql`
+
+### Quick verification script
+
+Run a simple end-to-end auth + file CRUD check:
+
+```bash
+php tests/auth_file_crud_test.php http://localhost/CodeOven
+```

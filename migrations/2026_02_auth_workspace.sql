@@ -4,7 +4,8 @@ ALTER TABLE `tbl_users`
   ADD COLUMN `is_active` TINYINT(1) NOT NULL DEFAULT 1 AFTER `password_hash`,
   ADD COLUMN `failed_login_attempts` INT NOT NULL DEFAULT 0 AFTER `is_active`,
   ADD COLUMN `last_login_at` DATETIME NULL AFTER `failed_login_attempts`,
-  ADD COLUMN `password_updated_at` DATETIME NULL AFTER `last_login_at`;
+  ADD COLUMN `locked_until` DATETIME NULL AFTER `last_login_at`,
+  ADD COLUMN `password_updated_at` DATETIME NULL AFTER `locked_until`;
 
 CREATE TABLE IF NOT EXISTS `tbl_user_workspaces` (
   `workspace_id` INT NOT NULL AUTO_INCREMENT,
