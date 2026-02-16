@@ -1,145 +1,138 @@
+# CodeOven
 
-# 🚀 CodeOven – Online IDE
+CodeOven is a browser-based HTML/CSS/JavaScript editor with live preview, user authentication, and project file management backed by PHP + MySQL.
 
-CodeOven is a web-based Integrated Development Environment (IDE) that allows users to write and execute code directly from their browser. It is designed with a focus on simplicity, modularity, and backend efficiency.
+## Highlights
 
----
+- Live HTML/CSS/JS editing with CodeMirror
+- Browser preview panel for rapid iteration
+- Signup/login flow for user access
+- File save/load integration through API endpoints
+- Offline-friendly local development workflow
 
-## 📌 Features
+## Tech Stack
 
-- 🖊 Online code editor
-- ⚙ Real-time code execution
-- 🧩 Modular backend logic
-- 🔒 Secure file handling
-- 👤 User session management
-- 💻 Supports multiple programming languages (as per backend configuration)
+- **Frontend:** HTML, CSS, JavaScript
+- **Backend:** PHP
+- **Database:** MySQL
+- **Editor Engine:** CodeMirror 5
 
----
+## Repository Structure
 
-## 🛠 Tech Stack
-
-| Category | Technologies |
-|----------|--------------|
-| **Backend** | PHP |
-| **Frontend** | HTML, CSS, JavaScript |
-| **Database** | MySQL |
-| **Version Control** | Git, GitHub |
-| **Server** | XAMPP / Apache |
-| **DevOps (Learning)** | Docker (Basics), GitHub Actions (Beginners), Linux (Basics), AWS (Beginner) |
-
----
-
-## 📁 Project Folder Structure (Example)
-
-```
-
+```text
 CodeOven/
-├── backend/
-│   ├── execute.php
-│   ├── compiler/
-│   └── config/
-├── frontend/
-│   ├── index.html
-│   ├── script.js
-│   └── styles.css
-├── database/
-│   └── codeoven_db.sql
-├── assets/
-├── README.md
-└── ...
-
-````
-
----
-
-## 🚀 Getting Started
-
-### 1️⃣ Clone Repository
-```bash
-git clone https://github.com/developershahil/CodeOven.git
-cd CodeOven
-````
-
-### 2️⃣ Set Up Backend
-
-* Place the project inside the server root directory (e.g., `xampp/htdocs/CodeOven`)
-* Start **Apache & MySQL** services
-
-### 3️⃣ Configure Database
-
-* Create a new database (e.g., `codeoven_db`)
-* Import `editor_db.sql` from the `database` folder
-
-### 4️⃣ Run the Application
-
-Open your browser and visit:
-
-```
-http://localhost/CodeOven
+├── .github/workflows/   # CI workflows
+├── api/                 # PHP endpoints (file/preferences operations)
+├── css/                 # Page-level styles
+├── docs/                # Project documentation
+├── includes/            # Shared backend helpers
+├── js/                  # Frontend scripts
+├── php/                 # Application pages/routes
+├── codemirror/          # Third-party CodeMirror sources
+├── editor_db.sql        # Database schema
+└── index.html           # Landing page
 ```
 
----
+For conventions and future refactoring guidelines, see `docs/PROJECT_STRUCTURE.md`.
 
-## 🧪 Testing
 
-* Enter sample code in the editor
-* Select desired language (if multiple are configured)
-* Click **Run** to execute and view output
+## Repository Governance
 
----
+- Structure conventions: `docs/PROJECT_STRUCTURE.md`
+- Commit message conventions: `docs/COMMIT_GUIDELINES.md`
+- Optional local git commit template: `.gitmessage`
 
-## 📦 Docker Support *(Planned)*
+To use the commit template locally:
 
 ```bash
-# Coming Soon
-docker build -t codeoven .
-docker run -p 8080:80 codeoven
+git config commit.template .gitmessage
 ```
 
-> Docker integration is in progress as part of ongoing DevOps learning.
 
----
+## Quick Start
 
-## 🔄 CI/CD Pipeline *(Upcoming)*
+1. Place this repository under your local PHP server root (e.g. `htdocs/CodeOven`).
+2. Start Apache and MySQL.
+3. Create a database (example: `editor_db`).
+4. Import `editor_db.sql`.
+5. Update DB credentials in `includes/db.php` if needed.
+6. Open `http://localhost/CodeOven`.
 
-* Basic GitHub Actions workflow will be added
-* Build automation and backend validation planned
+## Quality & Tooling
 
----
+This repository now includes:
 
-## 📚 Future Enhancements
+- `.editorconfig` for consistent formatting.
+- `.gitignore` for local artifacts and dependency folders.
+- GitHub Actions workflow (`.github/workflows/php-lint.yml`) for automated PHP lint checks.
 
-* [ ] Add Docker support
-* [ ] Configure GitHub Actions CI/CD
-* [ ] Support more programming languages
-* [ ] User authentication & workspace management
-* [ ] Deploy on AWS (EC2 / Elastic Beanstalk)
-* [ ] Performance logs & monitoring system
+## Local Health Checks
 
----
+Run before opening a PR:
 
-## 👨‍💻 about us
+```bash
+find php api includes -type f -name '*.php' -print0 | while IFS= read -r -d '' file; do php -l "$file"; done
+```
 
-**Kashak Modi** , **Shahil Rathod**
-📍 Jamnagar, Gujarat, India
-> kashak modi is a main person that think about this project and she provide me chance for working on this project as backend developer.
-> special thanks to **kashak Modi**
+Then verify manually:
 
-📧 Email: **[kashakmodi15@gmail.com](mailto:kashakmodi15@gmail.com)**
-📧 Email: **[sahilrathod222@gmail.com](mailto:sahilrathod222@gmail.com)**
-🔗 GitHub: **[https://github.com/developershahil](https://github.com/developershahil)**
-🔗 LinkedIn: **[https://linkedin.com/in/rathod-sahil](https://linkedin.com/in/rathod-sahil)**
+- Landing page interactions render correctly.
+- Dashboard scripts load without console errors.
+- Save/load operations work from the dashboard.
 
-> 💡 Currently learning Docker, CI/CD pipelines, Linux & AWS to transition towards DevOps & Cloud Engineering roles.
+## Secure Code Execution Sandbox
 
----
+CodeOven exposes `POST /api/execute` to run user-submitted code safely in Docker sandboxes for:
+- Python
+- PHP
+- C++
 
-## ⭐ Support
+### Endpoint request
+- `language`: `python | php | cpp` (also accepts `c++`)
+- `code`: source code string
+- `stdin`: optional standard input string
 
-If you like this project, please ⭐ *star the repository* on GitHub.
+### Endpoint response
+- `stdout`
+- `stderr`
+- `exit_code`
+- `timed_out`
 
----
+### Production setup
+Prebuild runner images before serving traffic: `bash sandbox/scripts/prebuild_images.sh`
 
-*“The best way to learn technology is by building and improving real-world projects.”* 🔥
 
+## Authentication & Workspaces
+
+- Registration/Login/Logout are enabled with secure sessions.
+- Password hashing uses bcrypt (`password_hash(..., PASSWORD_BCRYPT)`).
+- CSRF protection is enforced on auth forms and write APIs.
+- Per-user workspace directories are stored at:
+  - `storage/workspaces/{user_id}`
+
+### API Auth
+
+All `/api/*` routes require an authenticated session.
+Write routes additionally require CSRF token:
+- header: `X-CSRF-Token`
+- or form field: `_csrf_token`
+
+### File CRUD APIs
+
+- `GET /api/get_files.php`
+- `GET /api/load_file.php?file_name={name}`
+- `POST /api/save_file.php`
+- `POST /api/rename_file.php`
+- `POST /api/delete_file.php`
+
+### DB Migration
+
+Run: `migrations/2026_02_auth_workspace.sql`
+
+### Quick verification script
+
+Run a simple end-to-end auth + file CRUD check:
+
+```bash
+php tests/auth_file_crud_test.php http://localhost/CodeOven
 ```
