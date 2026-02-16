@@ -1,54 +1,57 @@
 <?php
-require_once __DIR__ . '/../includes/auth.php';
-header('Content-Type: application/json; charset=utf-8');
+declare(strict_types=1);
 
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-    exit();
+require_once __DIR__ . '/middleware.php';
+require_once __DIR__ . '/../includes/workspace.php';
+
+$userId = api_require_auth();
+api_require_csrf_for_write();
+
+$fileName = trim((string)($_POST['file_name'] ?? ''));
+$html = (string)($_POST['html'] ?? '');
+$css = (string)($_POST['css'] ?? '');
+$js = (string)($_POST['js'] ?? '');
+
+if ($fileName === '') {
+    api_json(['success' => false, 'message' => 'File name required.'], 422);
 }
-
-$user_id = current_user_id();
-$file_name_input = trim($_POST['file_name'] ?? '');
-$html = $_POST['html'] ?? '';
-$css = $_POST['css'] ?? '';
-$js = $_POST['js'] ?? '';
-
-if ($file_name_input === '') {
-    echo json_encode(['success' => false, 'message' => 'File name required.']);
-    exit();
-}
-
-// --- 🧠 Extract file name (without extension) ---
-$path_info = pathinfo($file_name_input);
-$base_name = $path_info['filename']; // 'index' from 'index.html'
-$ext = strtolower($path_info['extension'] ?? ''); // 'html', 'css', or 'js'
-
-// --- If file type provided in content keys, use those ---
-$types = ['html' => $html, 'css' => $css, 'js' => $js];
 
 try {
-    foreach ($types as $type => $content) {
-        $content = trim($content);
+    $fileName = sanitize_project_name($fileName);
+} catch (Throwable $e) {
+    api_json(['success' => false, 'message' => 'Invalid file name.'], 422);
+}
 
-        if ($content === '') {
-            continue;
-        }
+write_project_files($userId, $fileName, $html, $css, $js);
 
-        // 🧩 Ensure base name only is stored (no extension)
-        $stmt = $pdo->prepare('SELECT file_id FROM tbl_files WHERE user_id = ? AND file_name = ? AND file_type = ? LIMIT 1');
-        $stmt->execute([$user_id, $base_name, $type]);
-        $row = $stmt->fetch();
+$pdo->beginTransaction();
+try {
+    $exists = $pdo->prepare('SELECT file_id FROM tbl_files WHERE user_id = ? AND file_name = ? AND file_type = ? LIMIT 1');
+    $insert = $pdo->prepare('INSERT INTO tbl_files (user_id, file_name, file_type, file_content, line_numbers, created_at, updated_at) VALUES (?, ?, ?, ?, 1, NOW(), NOW())');
+    $update = $pdo->prepare('UPDATE tbl_files SET updated_at = NOW() WHERE file_id = ?');
 
+    foreach (['html', 'css', 'js'] as $type) {
+        $exists->execute([$userId, $fileName, $type]);
+        $row = $exists->fetch();
         if ($row) {
-            $stmt2 = $pdo->prepare('UPDATE tbl_files SET file_content = ?, updated_at = NOW() WHERE file_id = ?');
-            $stmt2->execute([$content, $row['file_id']]);
+            $update->execute([(int)$row['file_id']]);
         } else {
-            $stmt2 = $pdo->prepare('INSERT INTO tbl_files (user_id, file_name, file_type, file_content) VALUES (?, ?, ?, ?)');
-            $stmt2->execute([$user_id, $base_name, $type, $content]);
+            $insert->execute([$userId, $fileName, $type, '']);
         }
     }
 
-    echo json_encode(['success' => true, 'message' => 'Saved']);
+    $pdo->commit();
+
+    api_json([
+        'success' => true,
+        'file_name' => $fileName,
+    ], 201);
 } catch (Exception $e) {
-    echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    api_json([
+        'success' => false,
+        'message' => 'Save failed.',
+    ], 500);
 }

@@ -1,9 +1,14 @@
 <?php
-require_once __DIR__ . '/../includes/auth.php';
-header('Content-Type: application/json; charset=utf-8');
-if (!isset($_SESSION['user_id'])) { echo json_encode(['success'=>false,'message'=>'Unauthorized']); exit(); }
-$user_id = current_user_id();
+declare(strict_types=1);
+
+require_once __DIR__ . '/middleware.php';
+
+$userId = api_require_auth();
+
 $stmt = $pdo->prepare('SELECT layout, word_wrap, show_line_numbers, auto_save FROM tbl_preferences WHERE user_id = ? LIMIT 1');
-$stmt->execute([$user_id]);
+$stmt->execute([$userId]);
 $row = $stmt->fetch();
-echo json_encode(['success'=>true, 'preferences' => $row]);
+api_json([
+    'success' => true,
+    'preferences' => $row ?: ['layout' => 'default', 'word_wrap' => 1, 'show_line_numbers' => 1, 'auto_save' => 1],
+]);

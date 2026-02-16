@@ -10,6 +10,20 @@ This script intentionally keeps UI changes minimal and uses existing CSS classes
 */
 (function(){
     const apiBase = '../api/';
+    const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+    const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '';
+
+    function withCsrf(body) {
+        if (!csrfToken || !(body instanceof URLSearchParams)) return body;
+        body.set('_csrf_token', csrfToken);
+        return body;
+    }
+
+    function fetchJson(url, options = {}) {
+        const opts = { credentials: 'same-origin', ...options };
+        return fetch(url, opts).then((r) => r.json());
+    }
+
     let currentName = localStorage.getItem('current_project') || '';
     const htmlEditorEl = document.getElementById('html-editor');
     const cssEditorEl = document.getElementById('css-editor');
@@ -34,7 +48,7 @@ This script intentionally keeps UI changes minimal and uses existing CSS classes
     }
 
     function ajax(url, opts={}){
-        return fetch(url, opts).then(r => r.json());
+        return fetchJson(url, opts);
     }
 
     function populateFileList(){
@@ -91,7 +105,7 @@ This script intentionally keeps UI changes minimal and uses existing CSS classes
         payload.append('html', editors.html ? editors.html.getValue() : '');
         payload.append('css', editors.css ? editors.css.getValue() : '');
         payload.append('js', editors.js ? editors.js.getValue() : '');
-        fetch(apiBase + 'save_file.php', { method: 'POST', body: payload }).then(r => r.json()).then(resp => {
+        fetchJson(apiBase + 'save_file.php', { method: 'POST', body: withCsrf(payload) }).then(resp => {
             if (resp.success) {
                 currentName = payload.get('file_name');
                 localStorage.setItem('current_project', currentName);
@@ -119,7 +133,7 @@ This script intentionally keeps UI changes minimal and uses existing CSS classes
         if (!confirm('Delete "' + currentName + '"? This cannot be undone.')) return;
         const payload = new URLSearchParams();
         payload.append('file_name', currentName);
-        fetch(apiBase + 'delete_file.php', { method: 'POST', body: payload }).then(r => r.json()).then(resp => {
+        fetchJson(apiBase + 'delete_file.php', { method: 'POST', body: withCsrf(payload) }).then(resp => {
             if (resp.success) {
                 currentName = '';
                 populateFileList();

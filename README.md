@@ -57,32 +57,55 @@ This repository now includes:
 Run before opening a PR:
 
 ```bash
-find php api includes -type f -name '*.php' -print0 | while IFS= read -r -d '' file; do php -l "$file"; done
+# Coming Soon
+docker build -t codeoven .
+docker run -p 8080:80 codeoven
 ```
 
-Then verify manually:
+> Docker integration is in progress as part of ongoing DevOps learning.
 
-- Landing page interactions render correctly.
-- Dashboard scripts load without console errors.
-- Save/load operations work from the dashboard.
+---
 
-## Secure Code Execution Sandbox
+## 🔄 CI/CD Pipeline *(Upcoming)*
 
-CodeOven exposes `POST /api/execute` to run user-submitted code safely in Docker sandboxes for:
-- Python
-- PHP
-- C++
+* Basic GitHub Actions workflow will be added
+* Build automation and backend validation planned
 
-### Endpoint request
-- `language`: `python | php | cpp` (also accepts `c++`)
-- `code`: source code string
-- `stdin`: optional standard input string
+---
 
-### Endpoint response
-- `stdout`
-- `stderr`
-- `exit_code`
-- `timed_out`
+## 📚 Future Enhancements
 
-### Production setup
-Prebuild runner images before serving traffic: `bash sandbox/scripts/prebuild_images.sh`
+* [ ] Add Docker support
+* [ ] Configure GitHub Actions CI/CD
+* [ ] Support more programming languages
+* [ ] User authentication & workspace management
+* [ ] Deploy on AWS (EC2 / Elastic Beanstalk)
+* [ ] Performance logs & monitoring system
+
+---
+
+## 👨‍💻 about us
+
+**Kashak Modi** , **Shahil Rathod**
+📍 Jamnagar, Gujarat, India
+> kashak modi is a main person that think about this project and she provide me chance for working on this project as backend developer.
+> special thanks to **kashak Modi**
+
+📧 Email: **[kashakmodi15@gmail.com](mailto:kashakmodi15@gmail.com)**
+📧 Email: **[sahilrathod222@gmail.com](mailto:sahilrathod222@gmail.com)**
+🔗 GitHub: **[https://github.com/developershahil](https://github.com/developershahil)**
+🔗 LinkedIn: **[https://linkedin.com/in/rathod-sahil](https://linkedin.com/in/rathod-sahil)**
+
+> 💡 Currently learning Docker, CI/CD pipelines, Linux & AWS to transition towards DevOps & Cloud Engineering roles.
+
+---
+
+## ⭐ Support
+
+If you like this project, please ⭐ *star the repository* on GitHub.
+
+---
+
+*“The best way to learn technology is by building and improving real-world projects.”* 🔥
+
+```
