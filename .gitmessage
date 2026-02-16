@@ -1,5 +1,9 @@
 # <type>(<scope>): <summary>
 #
+# Per-file/folder bullets (optional for multi-scope commits):
+# - <folder>: <change>
+# - <folder>: <change>
+#
 # Why:
 # -
 #
