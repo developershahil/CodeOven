@@ -1,23 +1,34 @@
 <?php
 require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/csrf.php';
 
-// If form posted, attempt login using DB
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username'] ?? '');
-    $password = $_POST['password'] ?? '';
-    if (login_user($username, $password)) {
-        // redirect to dashboard
-        header('Location: dashboard.php');
-        exit();
-    } else {
-        $login_error = 'Invalid username or password.';
-    }
-}
-// If already logged in, redirect
-if (isset($_SESSION['user_id'])) {
+if (is_authenticated()) {
     header('Location: dashboard.php');
     exit();
 }
+
+$login_error = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!csrf_validate($_POST['_csrf_token'] ?? null)) {
+        $login_error = 'Invalid request token.';
+    } else {
+        csrf_rotate();
+    }
+
+    $username = trim($_POST['username'] ?? '');
+    $password = $_POST['password'] ?? '';
+
+    if ($login_error === '' && login_user($username, $password)) {
+        header('Location: dashboard.php');
+        exit;
+    }
+
+    if ($login_error === '') {
+        $login_error = 'Invalid username or password.';
+    }
+}
+
+$csrf = csrf_token();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -40,14 +51,14 @@ if (isset($_SESSION['user_id'])) {
                 <h2>Welcome Back</h2>
                 <p>Sign in to access your account</p>
             </div>
-            
-            <?php if (isset($error)): ?>
-                <div class="error-message"><?php echo $error; ?></div>
+
+            <?php if ($login_error !== ''): ?>
+                <div class="error-message"><?php echo htmlspecialchars($login_error, ENT_QUOTES, 'UTF-8'); ?></div>
             <?php endif; ?>
-            
+
             <form method="POST" action="login.php" class="login-form">
+                <input type="hidden" name="_csrf_token" value="<?php echo htmlspecialchars($csrf, ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="form-group">
-                    <label for="username">Username</label>
                     <div class="input-with-icon">
                         <i class="fas fa-user"></i>
                         <input type="text" id="username" name="username" placeholder="Enter your username" required>
@@ -56,7 +67,6 @@ if (isset($_SESSION['user_id'])) {
                 
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <div class="input-with-icon">
                         <i class="fas fa-key"></i>
                         <input type="password" id="password" name="password" placeholder="Enter your password" required>
                         <i class="fas fa-eye toggle-password" id="togglePassword"></i>

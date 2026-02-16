@@ -1,27 +1,42 @@
 <?php
 require_once __DIR__ . '/../includes/auth.php';
-// handle signup POST
+require_once __DIR__ . '/../includes/csrf.php';
+
+if (is_authenticated()) {
+    header('Location: dashboard.php');
+    exit();
+}
+
 $signup_success = false;
 $signup_error = '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!csrf_validate($_POST['_csrf_token'] ?? null)) {
+        $signup_error = 'Invalid request token.';
+    } else {
+        csrf_rotate();
+    }
+
     $username = trim($_POST['username'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirm = $_POST['confirm_password'] ?? '';
-    if ($password !== $confirm) {
+
+    if ($signup_error === '' && $password !== $confirm) {
         $signup_error = 'Passwords do not match.';
-    } else {
+    } elseif ($signup_error === '') {
         $res = register_user($username, $email, $password);
         if ($res['success']) {
-            // After signup, auto-login user
             login_user($username, $password);
             header('Location: dashboard.php');
-            exit();
+            exit;
         } else {
             $signup_error = $res['message'] ?? 'Signup failed.';
         }
     }
 }
+
+$csrf = csrf_token();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,72 +59,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h2>Join Us Today</h2>
                 <p>Create your account to get started</p>
             </div>
-            
+
+            <?php if ($signup_error !== ''): ?>
+                <div class="error-message"><?php echo htmlspecialchars($signup_error, ENT_QUOTES, 'UTF-8'); ?></div>
+            <?php endif; ?>
+
             <form method="POST" action="signup.php" class="signup-form">
+                <input type="hidden" name="_csrf_token" value="<?php echo htmlspecialchars($csrf, ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="form-group">
                     <label for="username">Username</label>
                     <div class="input-with-icon">
                         <i class="fas fa-user"></i>
                         <input type="text" id="username" name="username" placeholder="Choose a username" 
                                value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>" 
-                               class="<?php echo isset($errors['username']) ? 'error' : ''; ?>">
+                               required>
                     </div>
-                    <?php if (isset($errors['username'])): ?>
-                        <div class="field-error"><?php echo $errors['username']; ?></div>
-                    <?php endif; ?>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="email">Email Address</label>
                     <div class="input-with-icon">
                         <i class="fas fa-envelope"></i>
                         <input type="email" id="email" name="email" placeholder="Enter your email" 
                                value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" 
-                               class="<?php echo isset($errors['email']) ? 'error' : ''; ?>">
+                               required>
                     </div>
-                    <?php if (isset($errors['email'])): ?>
-                        <div class="field-error"><?php echo $errors['email']; ?></div>
-                    <?php endif; ?>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="password">Password</label>
                     <div class="input-with-icon">
                         <i class="fas fa-key"></i>
                         <input type="password" id="password" name="password" placeholder="Create a password" 
-                               class="<?php echo isset($errors['password']) ? 'error' : ''; ?>">
+                               required>
                         <i class="fas fa-eye toggle-password" id="togglePassword"></i>
                     </div>
-                    <?php if (isset($errors['password'])): ?>
-                        <div class="field-error"><?php echo $errors['password']; ?></div>
-                    <?php endif; ?>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="confirm_password">Confirm Password</label>
                     <div class="input-with-icon">
                         <i class="fas fa-key"></i>
                         <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" 
-                               class="<?php echo isset($errors['confirm_password']) ? 'error' : ''; ?>">
+                               required>
                         <i class="fas fa-eye toggle-password" id="toggleConfirmPassword"></i>
                     </div>
-                    <?php if (isset($errors['confirm_password'])): ?>
-                        <div class="field-error"><?php echo $errors['confirm_password']; ?></div>
-                    <?php endif; ?>
                 </div>
-                
+
                 <div class="form-group checkbox-group">
                     <label class="checkbox-container">
-                        <input type="checkbox" name="agree_terms" id="agree_terms" 
-                               <?php echo (isset($_POST['agree_terms']) && $_POST['agree_terms']) ? 'checked' : ''; ?>>
+                        <input type="checkbox" name="agree_terms" id="agree_terms" required>
                         <span class="checkmark"></span>
                         I agree to the <a href="#">Terms and Conditions</a>
                     </label>
-                    <?php if (isset($errors['agree_terms'])): ?>
-                        <div class="field-error"><?php echo $errors['agree_terms']; ?></div>
-                    <?php endif; ?>
                 </div>
-                
+
                 <button type="submit" class="signup-btn">Create Account</button>
                     </form>
             

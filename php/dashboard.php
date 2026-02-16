@@ -1,13 +1,10 @@
 <?php
-session_start();
- // Check if user is logged in, otherwise redirect to login
-//  if (!isset($_SESSION['user_id'])) {
-//      header("Location: login.php");
-//      exit();
-//  }
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/csrf.php';
+require_login_page('login.php');
 
-// Get username from session
 $username = $_SESSION['username'] ?? 'Guest';
+$csrfToken = csrf_token();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,6 +13,7 @@ $username = $_SESSION['username'] ?? 'Guest';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Code Editor Dashboard</title>
     <link rel="stylesheet" href="../css/dashboard.css">
+    <meta name="csrf-token" content="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
     <!-- CodeMirror CSS -->
     <link rel="stylesheet" href="../codemirror/codemirror-5.65.20/lib/codemirror.css">
     <link rel="stylesheet" href="../codemirror/codemirror-5.65.20/theme/dracula.css">
@@ -50,6 +48,7 @@ $username = $_SESSION['username'] ?? 'Guest';
     <script src="../codemirror/addon/search/searchcursor.js"></script>
     <script src="../codemirror/addon/dialog/dialog.js"></script>
 
-    <script src="../js/dashboard.js"></script>\n    <script src="../js/api_integration.js"></script>
+    <script src="../js/dashboard.js"></script>
+    <script src="../js/api_integration.js"></script>
 </body>
 </html>

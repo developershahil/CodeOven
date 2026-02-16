@@ -72,6 +72,10 @@ CREATE TABLE IF NOT EXISTS `tbl_users` (
   `username` varchar(50) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password_hash` char(60) NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `failed_login_attempts` int NOT NULL DEFAULT '0',
+  `last_login_at` datetime DEFAULT NULL,
+  `password_updated_at` datetime DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `username` (`username`),
@@ -101,6 +105,18 @@ ALTER TABLE `tbl_files`
 --
 ALTER TABLE `tbl_preferences`
   ADD CONSTRAINT `tbl_preferences_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`) ON DELETE CASCADE;
+
+DROP TABLE IF EXISTS `tbl_user_workspaces`;
+CREATE TABLE IF NOT EXISTS `tbl_user_workspaces` (
+  `workspace_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `workspace_path` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`workspace_id`),
+  UNIQUE KEY `uniq_workspace_user` (`user_id`),
+  CONSTRAINT `fk_workspace_user` FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
